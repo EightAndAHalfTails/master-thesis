@@ -122,47 +122,35 @@ The following metrics will be taken into account:
 \paragraph{Bus Used} Customisable between CoreConnect PLB, OPB, FSL, LMB, AXI4.
 \paragraph{Architecture} In terms of its instruction set architecture, MicroBlaze is very similar to the RISC-based DLX architecture, which in turn is based upon the MIPS architecture.
 \paragraph{Cache} 2kB--64kB Direct mapped write-through or write-back.
-\paragraph{MMU} 
-\paragraph{User Levels} 
-\paragraph{License} 
-\paragraph{Documentation} 
-\paragraph{Toolchain} 
-\paragraph{Maturity} 
-
-\subsection{Nios}
-\paragraph{Developer} 
-\paragraph{Bus Used} 
-\paragraph{Architecture} 
-\paragraph{Cache} 
-\paragraph{MMU} 
-\paragraph{User Levels} 
-\paragraph{License} 
-\paragraph{Documentation} 
-\paragraph{Toolchain} 
-\paragraph{Maturity} 
+\paragraph{MMU} Optional. 4GB virtual memory, supports page sizes of 1kB, 4kB, 16kB, 64kB, 256kB, 1MB, 4MB, and 16MB. Page-replacement strategy controlled by software.
+\paragraph{User Levels} User and privileged modes.
+\paragraph{License} Proprietary. Available from Xilinx along with the EDK (Embedded Development Kit). A smaller, less functional version with limited target devices is available for free, but the full version costs \$3000--\$6000, depending on the license type. The license also restricts the use of Microblaze to Xilinx FPGAs. LGPL clones also exist in Verilog, VHDL, or MyHDL. See \href{http://en.wikipedia.org/wiki/MicroBlaze#Clones}{here}.
+\paragraph{Documentation} Rather comprehensive reference manual \href{http://www.xilinx.com/support/documentation/sw_manuals/xilinx11/mb_ref_guide.pdf}{here}.
+\paragraph{Toolchain} Xilinx provides the Vivado design suite, including an IDE, SDK, Simulator, Analyser, and Synthesiser. Support for Microblaze also exists in gcc as of version 4.6.
+\paragraph{Maturity} Currently in version 8.50b, under development since 2002.
 
 \subsection{Nios II}
-\paragraph{Developer} 
-\paragraph{Bus Used} 
-\paragraph{Architecture} 
-\paragraph{Cache} 
-\paragraph{MMU} 
-\paragraph{User Levels} 
-\paragraph{License} 
-\paragraph{Documentation} 
-\paragraph{Toolchain} 
-\paragraph{Maturity} 
+\paragraph{Developer} Altera
+\paragraph{Bus Used} Altera's own Avalon bus.
+\paragraph{Architecture} 32-bit RISC architecture, with support for up to 256 custom instructions. 3 different configurations are available: fast (f), standard (s), and economy (e).
+\paragraph{Cache} Nios II/f has separate instruction and data caches of 512B to 64kB, while the Nios II/s has only an instruction cache, and the Nios II/e has none.
+\paragraph{MMU} There is an optional MMU and MPU for the Nios II/f. Default is 16-way set-associative cache, the default size depends on the target FPGA but is either 128 or 256 entries or 4 or 8kB. Replacement strategy is set by the software.
+\paragraph{User Levels} The Nios II supports user and supervisor modes only when the design includes an MMU or MPU.
+\paragraph{License} The License for the Nios II IP core is around \$500. Currently the Altera website has a redirect loop and I am unable to find information on toolchain licenses.
+\paragraph{Documentation} Both Hardware and Software development documentation can be found \href{https://www.altera.com/support/literature/lit-nio2.html}{here}.
+\paragraph{Toolchain} Qsys and Quartus for hardware, Altera's Embedded Design Suite for software, based on Eclipse and the GNU toolchain.
+\paragraph{Maturity} In development since 2004, currently in version 13.1, released in 2013.
 
 \subsection{Cortex-M1}
-\paragraph{Developer} 
-\paragraph{Bus Used} 
-\paragraph{Architecture} 
-\paragraph{Cache} 
-\paragraph{MMU} 
-\paragraph{User Levels} 
-\paragraph{License} 
-\paragraph{Documentation} 
-\paragraph{Toolchain} 
-\paragraph{Maturity} 
+\paragraph{Developer} ARM
+\paragraph{Bus Used} ARM Corelink Interconnect
+\paragraph{Architecture} Three-stage 32-bit RISC, ARMv6M ISA.
+\paragraph{Cache} No cache, TCM only, up to 1MB each.
+\paragraph{MMU} None.
+\paragraph{User Levels} I don't think it has different levels.
+\paragraph{License} Proprietary, must contact sales team for cost, I think.
+\paragraph{Documentation} No reference manual specifically for the M1. See the ``resources'' tab on \href{http://www.arm.com/products/processors/cortex-m/cortex-m1.php}{this} page for more information.
+\paragraph{Toolchain} An extension of Altera's Quartus II. Supported by the ARM microprocessor development kit for software development.
+\paragraph{Maturity} Couldn't find any information.
 
 \end{document}
