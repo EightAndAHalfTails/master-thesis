@@ -45,11 +45,5 @@ int main()
 
   serial_puts("Hello world!\r\n");
   
-  asm("l.mfspr r1,r0,0b00001");
-  asm("l.sw 0x2000(r0),r1");
-  char* reg = 0x2000;
-  serial_puts(*reg);
-  serial_puts("\r\n");
-  
   return 0;
 }
