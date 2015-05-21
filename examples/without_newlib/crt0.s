@@ -77,9 +77,9 @@ _start:
 	l.sw	0x2000(r0), r13		# pt[0] = 0x0300 0001
 	
 	# activate mmu
-	l.mfspr	r13, r0, 0x08010001	# r13 <- sr
+	l.mfspr	r13, r0, 0x00000011	# r13 <- sr
 	l.ori	r13, r13, 0x20		# enable bit 5 (dmmu)
-	l.mtspr	r13, r0, 0x08010001	# r13 -> sr
+	l.mtspr	r13, r0, 0x00000011	# r13 -> sr
 	
 	# do memory access
 	l.lwz	r15, 0x4000(r0)
