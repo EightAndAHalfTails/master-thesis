@@ -41,7 +41,7 @@ dtlbms:	# find pte and add to tlb
 	l.andi	r25, r19, 0x003f	# extract bits 5:0 of pte
 	l.or	r23, r23, r25		# add to translate reg
 	# todo: look up protection bits
-	l.ori	r23, r23, 0x03b0	# add protection bits to reg
+	l.ori	r23, r23, 0x03c0	# add protection bits to reg
 	l.mtspr	r21, r23, 0x0a80	# move to tlb translate reg
 	
 	l.rfe				# return from exception
@@ -59,7 +59,7 @@ _start:
 	l.ori	r13, r0, 0x0001 	# reg = 0x0000 0001
 	l.mtspr	r0, r13, 0x0a01		#  put in w0mr1
 	l.movhi	r13, 0x0000		# pa = 0x2000 -> ppn = 0
-	l.ori	r13, r13, 0x03b0 	# reg = 0x0000 03b0
+	l.ori	r13, r13, 0x03c0 	# reg = 0x0000 03c0
 	l.mtspr	r0, r13, 0x0a81		#  put in w0tr1
 	
 	# place test value in memory
@@ -68,8 +68,8 @@ _start:
 	l.sw	0x4000(r0), r13		# mem(0x04000) <- 0xbabeface
 		
 	# put pte in page table
-	#l.movhi r13, 0x0000		# vp 0 -> pp 0
-	l.ori	r13, r0, 0x0200		# 0x0000 0200
+	#l.movhi r13, 0x0000		# vp 0 -> pp 2
+	l.ori	r13, r0, 0x1200		# 0x0000 1200
 	l.sw	0x2008(r0), r13		# pt[2] = 0x0000 0200
 	
 	# activate mmu
