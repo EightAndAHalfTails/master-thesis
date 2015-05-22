@@ -36,7 +36,7 @@ dtlbms:	# find pte and add to tlb
 	l.and	r23, r15, r13		# extract bits 31:10 of pte
 	l.slli	r23, r23, 2		# move to ppn location
 	l.andi	r25, r15, 0x003f	# extract bits 5:0 of pte
-	l.or	r23, r23, r15		# add to translate reg
+	l.or	r23, r23, r25		# add to translate reg
 	#l.nop # look up protection bits
 	l.ori	r23, r23, 0x03b0	# add protection bits to reg
 	l.mtspr	r21, r23, 0x0a80	# move to tlb translate reg
@@ -84,9 +84,9 @@ _start:
 	l.sw	0x2000(r0), r13		# pt[0] = 0x0400 0001
 	
 	# activate mmu
-	l.mfspr	r13, r0, 0x00000011	# r13 <- sr
+	l.mfspr	r13, r0, 0x0011		# r13 <- sr
 	l.ori	r13, r13, 0x20		# enable bit 5 (dmmu)
-	l.mtspr	r0, r13, 0x00000011	# r13 -> sr
+	l.mtspr	r0, r13, 0x0011		# r13 -> sr
 	
 	# do memory access
 	l.lwz	r15, 0x4000(r0)
