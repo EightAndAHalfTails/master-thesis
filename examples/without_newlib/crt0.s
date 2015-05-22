@@ -7,6 +7,9 @@ reset:
 	.org 0x300
 
 dpgflt: # add pte
+	l.j	dpgflt
+	l.nop
+	l.rfe
 
 	.org 0x900
 	
@@ -14,14 +17,14 @@ dtlbms:	# find pte and add to tlb
 	l.mfspr r15, r0, 0x30 		# exception ea reg -> r15
 	l.ori	r17, r0, 0x2000		# table base pointer -> r17
 	
-	l.andi	r19, r15, 0x0fff	# mask upper bytes of ea
+	l.srli	r19, r15, 11		# get vpn:set from ea (>>13 then <<2 to use as pointer)
 	l.add	r19, r19, r17		# offset into page table
 	l.lwz	r19, 0(r19)		# page table entry -> r19
 
 	l.movhi	r13, 0x0003
 	l.ori	r13, r13, 0xf000
 	l.and	r21, r15, r13		# extract bits 18-13 of ea
-	l.srli	r21, r21, 12		# r21 <- tlb reg num
+	l.srli	r21, r21, 13		# r21 <- tlb set reg num
 
 	# dtlbw0mrX[31:12] <- ea[31:19]
 	l.movhi	r13, 0xfff0
@@ -32,28 +35,14 @@ dtlbms:	# find pte and add to tlb
 
 	# dtlbw0trX[31:12] <- pte[31:10]
 	l.movhi	r13, 0xffff
-	l.ori	r13, r13, 0xfb00
+	l.ori	r13, r13, 0xfc00
 	l.and	r23, r19, r13		# extract bits 31:10 of pte
-	l.slli	r23, r23, 2		# move to ppn location
+	l.slli	r23, r23, 3		# move to ppn location
 	l.andi	r25, r19, 0x003f	# extract bits 5:0 of pte
 	l.or	r23, r23, r25		# add to translate reg
 	# todo: look up protection bits
 	l.ori	r23, r23, 0x03b0	# add protection bits to reg
 	l.mtspr	r21, r23, 0x0a80	# move to tlb translate reg
-
-	# dtlbwYtrX:
-	# 31:12 PPN
-	# 11:10 reserved
-	# 9 supervisor write enable
-	# 8 supervisor read enable
-	# 7 user write enable
-	# 6 user read enable
-	# 5 dirty
-	# 4 accessed
-	# 3 weakly-ordered
-	# 2 write-back
-	# 1 cache inhibit
-	# 0 cache coherency
 	
 	l.rfe				# return from exception
 	
@@ -66,12 +55,12 @@ _start:
 	l.or	r2, r0, r1
 
 	# add base pointer to tlb
-	l.movhi r13, 0x0200
-	l.ori	r13, r13, 0x0001 	# vpn = 0x2000
-	l.mtspr	r0, r13, 0x0a00		#  put in w0mr0
-	l.movhi	r13, 0x0800
-	l.ori	r13, r13, 0x03b1 	# ppn = 0x2000
-	l.mtspr	r0, r13, 0x0a80		#  put in w0tr0
+	#l.movhi r13, 0x0000		# ea = 0x2000 -> vpn = 0
+	l.ori	r13, r0, 0x0001 	# reg = 0x0000 0001
+	l.mtspr	r0, r13, 0x0a01		#  put in w0mr1
+	l.movhi	r13, 0x0000		# pa = 0x2000 -> ppn = 0
+	l.ori	r13, r13, 0x03b0 	# reg = 0x0000 03b0
+	l.mtspr	r0, r13, 0x0a81		#  put in w0tr1
 	
 	# place test value in memory
 	l.movhi	r13, 0xbabe
@@ -79,9 +68,9 @@ _start:
 	l.sw	0x4000(r0), r13		# mem(0x04000) <- 0xbabeface
 		
 	# put pte in page table
-	l.movhi	r13, 0x0400
-	l.ori	r13, r13, 0x0001
-	l.sw	0x2000(r0), r13		# pt[0] = 0x0400 0001
+	#l.movhi r13, 0x0000		# vp 0 -> pp 0
+	l.ori	r13, r0, 0x0200		# 0x0000 0200
+	l.sw	0x2008(r0), r13		# pt[2] = 0x0000 0200
 	
 	# activate mmu
 	l.mfspr	r13, r0, 0x0011		# r13 <- sr
