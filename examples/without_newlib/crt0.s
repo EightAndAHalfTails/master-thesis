@@ -16,7 +16,7 @@ dtlbms:	# find pte and add to tlb
 	
 	l.andi	r19, r15, 0x0fff	# mask upper bytes of ea
 	l.add	r19, r19, r17		# offset into page table
-	l.lwz	r19, 0(r15)		# page table entry -> r19
+	l.lwz	r19, 0(r19)		# page table entry -> r19
 
 	l.movhi	r13, 0x0003
 	l.ori	r13, r13, 0xf000
@@ -33,11 +33,11 @@ dtlbms:	# find pte and add to tlb
 	# dtlbw0trX[31:12] <- pte[31:10]
 	l.movhi	r13, 0xffff
 	l.ori	r13, r13, 0xfb00
-	l.and	r23, r15, r13		# extract bits 31:10 of pte
+	l.and	r23, r19, r13		# extract bits 31:10 of pte
 	l.slli	r23, r23, 2		# move to ppn location
-	l.andi	r25, r15, 0x003f	# extract bits 5:0 of pte
+	l.andi	r25, r19, 0x003f	# extract bits 5:0 of pte
 	l.or	r23, r23, r25		# add to translate reg
-	#l.nop # look up protection bits
+	# todo: look up protection bits
 	l.ori	r23, r23, 0x03b0	# add protection bits to reg
 	l.mtspr	r21, r23, 0x0a80	# move to tlb translate reg
 
