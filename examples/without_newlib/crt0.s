@@ -26,7 +26,7 @@ dtlbms:	# find pte and add to tlb
 	l.andi	r23, r15, 0xfff00000	# extract bits 31:19 of ea
 	l.srli	r23, r23, 7		# move to vpn position
 	l.ori	r23, r23, 1		# set valid bit
-	l.mtspr	r23, r21, 0x0a00	# move to tlb match reg
+	l.mtspr	r21, r23, 0x0a00	# move to tlb match reg
 
 	# dtlbw0trX[31:12] <- pte[31:10]
 	l.andi	r23, r15, 0xfffffb00	# extract bits 31:10 of pte
@@ -35,7 +35,7 @@ dtlbms:	# find pte and add to tlb
 	l.or	r23, r23, r15		# add to translate reg
 	l.nop # look up protection bits
 	l.ori	r23, r23, 0x3b0		# add protection bits to reg
-	l.mtspr	r23, r21, 0x0a80	# move to tlb translate reg
+	l.mtspr	r21, r23, 0x0a80	# move to tlb translate reg
 
 	# dtlbwYtrX:
 	# 31:12 PPN
@@ -63,9 +63,9 @@ _start:
 
 	# add base pointer to tlb
 	l.ori	r13, r0, 0x02000001 	# vpn = 0x2000
-	l.mtspr	r13, r0, 0x0a00		#  put in w0mr0
+	l.mtspr	r0, r13, 0x0a00		#  put in w0mr0
 	l.ori	r13, r0, 0x080003b1 	# ppn = 0x2000
-	l.mtspr	r13, r0, 0x0a80		#  put in w0tr0
+	l.mtspr	r0, r13, 0x0a80		#  put in w0tr0
 	
 	# place test value in memory
 	l.movhi	r13, 0xbabe
@@ -74,12 +74,12 @@ _start:
 		
 	# put pte in page table
 	l.ori	r13, r0, 0x04000001
-	l.sw	0x2000(r0), r13		# pt[0] = 0x0300 0001
+	l.sw	0x2000(r0), r13		# pt[0] = 0x0400 0001
 	
 	# activate mmu
 	l.mfspr	r13, r0, 0x00000011	# r13 <- sr
 	l.ori	r13, r13, 0x20		# enable bit 5 (dmmu)
-	l.mtspr	r13, r0, 0x00000011	# r13 -> sr
+	l.mtspr	r0, r13, 0x00000011	# r13 -> sr
 	
 	# do memory access
 	l.lwz	r15, 0x4000(r0)
