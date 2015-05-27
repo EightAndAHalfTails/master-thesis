@@ -96,7 +96,7 @@ _start:
 	# do memory access
 	l.lwz	r15, 0x4000(r0)
 
-#	l.jal	main		
+	l.jal	main		
 	l.nop
 
 end:	l.j	end

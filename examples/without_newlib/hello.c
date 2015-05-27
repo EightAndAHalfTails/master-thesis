@@ -44,6 +44,18 @@ int main()
   serial_init();
 
   serial_puts("Hello world!\r\n");
+
+  int a = 0;
+  int b = 1;
+  
+  while(b < 100)
+    {
+      serial_putc(b);
+      serial_puts("\r\n");
+      
+      b += a;
+      a = b-a;
+    }
   
   return 0;
 }
