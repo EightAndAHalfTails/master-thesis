@@ -114,23 +114,25 @@ _start:
 	# store test value in memory
 	l.movhi	r13, 0xc0d1		#
 	l.ori	r13, r13, 0xf1ed	# r13 = 0xcod1f1ed
-	l.ori	r15, r0, 0x4000		# r15 = 0x4000
+	l.ori	r15, r0, 0x4000		# r15 = 0x4444
 	
 	l.sw	0(r15), r13
 	
 	# mark cache line as invalid in dmmu
 	l.ori	r19, r0, 1
-	l.andi	r17, r15, 0x1f
-	l.sll	r19, r19, r17		# r19 = one-hot bit to set
-	
-	l.andi	r17, r15, 0x1fff
-	l.srli	r17, r17, 5		# r17 = reg no
+	l.andi	r17, r15, 0x1f		# r17 = bit no = EA[9:5]
+	l.sll	r19, r19, r17		# r19 = one-hot(r17)
 
-#	l.mfspr	r21, r17, 0x0e00
-#	l.or	r21, r19, r21
-#	l.sw	4(r15), r21
-#	l.mtspr	r17, r21, 0x0e00
-	l.mtspr	r17, r0, 0x0e00
+	l.movhi r17, 0x0007
+	l.ori	r17, r17, 0xfb00
+	l.and	r17, r15, r17
+	l.srli	r17, r17, 10		# r17 = reg no = EA[18:10]
+
+	l.mfspr	r21, r17, 0x0e00
+	l.or	r21, r19, r21
+	l.sw	4(r15), r21
+	l.mtspr	r17, r21, 0x0e00	# set prot reg
+#	l.mtspr	r17, r0, 0x0e00
 
 	# activate mmu
 	l.mfspr	r13, r0, 0x0011		# r13 <- sr
