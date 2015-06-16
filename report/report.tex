@@ -4,20 +4,18 @@
 % This is a simple template for a LaTeX document using the "article" class.
 % See "book", "report", "letter" for other types of document.
 
-\documentclass[11pt]{article} % use larger type; default would be 10pt
+\documentclass[11pt,a4paper,twoside,openany]{report}
 
-\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+% Nicer fonts
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 
 %%% Examples of Article customizations
 % These packages are optional, depending whether you want the features they provide.
 % See the LaTeX Companion or other references for full information.
 
 %%% PAGE DIMENSIONS
-\usepackage{geometry} % to change the page dimensions
-\geometry{a4paper} % or letterpaper (US) or a5paper or....
-% \geometry{margin=2in} % for example, change the margins to 2 inches all round
-% \geometry{landscape} % set up the page for landscape
-%   read geometry.pdf for detailed page layout information
+\usepackage[inner=2cm,outer=4cm]{geometry}
 
 \usepackage{graphicx} % support the \includegraphics command and options
 
@@ -38,41 +36,80 @@
 \lhead{}\chead{}\rhead{}
 \lfoot{}\cfoot{\thepage}\rfoot{}
 
-%%% SECTION TITLE APPEARANCE
-\usepackage{sectsty}
-\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
-% (This matches ConTeXt defaults)
-
 %%% ToC (table of contents) APPEARANCE
 \usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
 \usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
 \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
+% Hyperlinks, URLs etc.
+\usepackage{hyperref}
+\usepackage{url}
+\hypersetup{
+    colorlinks=true,
+    citecolor=black,
+    urlcolor=black,
+    linkcolor=black,
+    pagecolor=black,
+    anchorcolor=black
+}
+
 %%% END Article customizations
 
 %%% The "real" document content comes below...
 
-\title{Project Report}
-\author{Jake Humphrey}
-%\date{} % Activate to display a given date or no date (if empty),
-         % otherwise the current date is printed 
+\title{%
+{\normalsize\scshape Imperial College London}\\
+{\normalsize\scshape Telecom Paristech}\\
+\vspace{2em}
+\hrule
+\vspace{1em}
+{\huge\bfseries Hardware-based Buffer Overflow Protection}\\
+\vspace{1em}
+\hrule
+\vspace{1em}
+{\small Submitted for part completion of MEng Electronic and Information Engineering}
+}
+\author{%
+Author: Jake Humphrey\\
+Supervisor: Guillaume Duc
+}
+\date{}
 
 \begin{document}
+
+\pagestyle{empty}
+
 \maketitle
 
-\section{Abstract}
-\section{Research}
-\section{SoCKit}
-\subsection{Building}
-\subsection{Debugging}
-\section{DE2}
-\subsection{Building}
-\subsection{Debugging}
-\subsection{Testing}
-\section{Hardware}
-\section{Software}
-\section{Conclusion}
-\section{Future Work}
+\cleardoublepage
+\begin{abstract}
+Implementing security features in hardware can free the software programmer from worrying about implementing such security, leading in turn to simplified code. This can be especially useful when programming in low-level languages such as C, which provide minimal built-in protection.
+
+The work detailed in this project report modifies the Memory Management Unit (MMU) of an existing processor to implement protection against buffer overflow attacks, then produces some assembly code showing how firmware or an operating system kernel would make use of the protection. Finally, it analyses the effect of the added protection on hardware area and clock frequency.
+
+\end{abstract}
+
+\cleardoublepage
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\tableofcontents
+
+\newpage
+\cleardoublepage
+\pagenumbering{arabic}
+
+\include{01-introduction}
+\include{02-research}
+\include{03-implementation}
+\include{04-results}
+
+\begin{thebibliography}{9}
+
+\bibitem{heartbleed}
+  \url{heartbleed.com} Fetched 2015-06-15.
+
+\end{thebibliography}
 
 \end{document}

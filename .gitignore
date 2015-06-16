@@ -110,3 +110,5 @@ sympy-plots-for-*.tex/
 
 # xindy
 *.xdy
+report/Thumbs.db
+research/Thumbs.db
