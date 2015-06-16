@@ -1,7 +1,106 @@
 \chapter{Implementation}
+This chapter gives an account of the work done during the project. Initially an Altera SoCKit was used as the target device. However, even after extensive modifications, a working build was not obtained. The details of the attempt will nonetheless be detailed both as a record of work done and to advise future attempts.
+
+Following this attempt, an Altera DE2 board was used. This target device proved successful, and the hardware modifications and code written that are detailed in the following sections were run on this board (although in theory, the code is device-agnostic).
+
 \section{SoCKit}
+The initial project aim was to use an Altera SoCKit Field Programmable Gate Array (FPGA) development board\cite{sockit} to instantiate and test the hardware. This section details the (ultimately unsuccessful) attempt to get it working.
+
 \subsection{Building}
-\subsection{Debugging}
+The first step was to build the OpenRISC processor and program it onto the board. For this a tool called \textbf{FuseSoC}\cite{fusesoc} (formerly \textbf{OrpSoCv3}) was used. FuseSoC's readme describes it as a ``package manager and a set of build tools for HDL [Hardware Description Language] code.'' Using this, it is simple\footnote{In theory.} to build \textbf{mor1kx} (the OpenRISC implementation in question) for the SoCKit with the command \verb|fusesoc build sockit|. This command invokes the relevant Quartus executables to build a netlist to be programmed.
+
+However, the build did not work at first. A lot of searching revealed the problem to be a bug in FuseSoC's libraries. As shown below, the port names between two files did not agree. Patching this error allowed the build to continue.\footnote{Unfortunately for me, by the time I thought to submit a bug report or a pull request upstream, the bug had alread been found and patched by the developers.}
+
+Figure~\ref{fig:wb_dec} gives the declaration of the \verb|avalon_to_wb_bridge| module. If this is compared to an instantiation of that module, such as the one given in Figure~\ref{fig:wb_inst}, it can be seen that several port names are incorrect. This is likely due to the former file being changed without proper care being taken to update port names throughout the code.
+
+Once the build succeeded, it could be programmed onto the board using the command \verb|fusesoc pgm sockit|.
+
+\begin{figure}[t]
+  \centering
+  \begin{lstlisting}[language=Verilog]
+module avalon_to_wb_bridge \#(
+	parameter DW = 32,	// Data width
+	parameter AW = 32	// Address width
+)(
+	input 		  wb_clk_i,
+	input 		  wb_rst_i,
+	// Avalon Slave input
+	input [AW-1:0] 	  s_av_address_i,
+	input [DW/8-1:0]  s_av_byteenable_i,
+	input 		  s_av_read_i,
+	output [DW-1:0]   s_av_readdata_o,
+	input [7:0] 	  s_av_burstcount_i,
+	input 		  s_av_write_i,
+	input [DW-1:0] 	  s_av_writedata_i,
+	output 		  s_av_waitrequest_o,
+	output 		  s_av_readdatavalid_o,
+	// Wishbone Master Output
+	output [AW-1:0]   wbm_adr_o,
+	output [DW-1:0]   wbm_dat_o,
+	output [DW/8-1:0] wbm_sel_o,
+	output 		  wbm_we_o,
+	output 		  wbm_cyc_o,
+	output 		  wbm_stb_o,
+	output [2:0] 	  wbm_cti_o,
+	output [1:0] 	  wbm_bte_o,
+	input [DW-1:0] 	  wbm_dat_i,
+	input 		  wbm_ack_i,
+	input 		  wbm_err_i,
+	input 		  wbm_rty_i
+);
+  \end{lstlisting}
+  \caption{The declaration of the avalon\_to\_wb\_bridge module\cite{wb_dec}}
+  \label{fig:wb_dec}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \begin{lstlisting}[language=Verilog]
+wb_to_avalon_bridge #(
+	.DW			(32),
+	.AW			(32),
+	.BURST_SUPPORT		(1)
+) hps_ddr3_wb2avl_bridge (
+	.wb_clk_i		(wb_clk),
+	.wb_rst_i		(wb_rst),
+	// Wishbone Slave Input
+	.wb_adr_i		(wb_m2s_hps_ddr3_adr),
+	.wb_dat_i		(wb_m2s_hps_ddr3_dat),
+	.wb_sel_i		(wb_m2s_hps_ddr3_sel),
+	.wb_we_i		(wb_m2s_hps_ddr3_we),
+	.wb_cyc_i		(wb_m2s_hps_ddr3_cyc),
+	.wb_stb_i		(wb_m2s_hps_ddr3_stb),
+	.wb_cti_i		(wb_m2s_hps_ddr3_cti),
+	.wb_bte_i		(wb_m2s_hps_ddr3_bte),
+	.wb_dat_o		(wb_s2m_hps_ddr3_dat),
+	.wb_ack_o		(wb_s2m_hps_ddr3_ack),
+	.wb_err_o		(wb_s2m_hps_ddr3_err),
+	.wb_rty_o		(wb_s2m_hps_ddr3_rty),
+	// Avalon Master Output
+	.m_av_address_o		(avm_hps_ddr3_address),
+	.m_av_byteenable_o	(hps_0_f2h_sdram0_data_byteenable),
+	.m_av_read_o		(hps_0_f2h_sdram0_data_read),
+	.m_av_readdata_i	(hps_0_f2h_sdram0_data_readdata),
+	.m_av_burstcount_o	(hps_0_f2h_sdram0_data_burstcount),
+	.m_av_write_o		(hps_0_f2h_sdram0_data_write),
+	.m_av_writedata_o	(hps_0_f2h_sdram0_data_writedata),
+	.m_av_waitrequest_i	(hps_0_f2h_sdram0_data_waitrequest),
+	.m_av_readdatavalid_i	(hps_0_f2h_sdram0_data_readdatavalid)
+);
+  \end{lstlisting}
+  \caption{An example attempt to instantiate the avalon\_to\_wb\_bridge module\cite{wb_inst}}
+  \label{fig:wb_inst}
+\end{figure}
+
+\subsection{Running}
+After the processor was built and the board programmed, the next step was to load an object file onto the processor. For this a linux image was used, compiled using the \verb|or1k-elf-gcc| toolchain as detailed on the OpenCores website\cite{or1k-linux}. The resulting object file was simulated under the toolchain's simulator and found to run as expected.
+
+To debug the running processor, including loading object files, the \textbf{Open On-chip Debugger} (\textbf{OpenOCD}) was used as detailed, once again, on the OpenCores website\cite{or1k-openocd}.
+
+However, running OpenOCD for the SoCKit gave an error regarding mismatched clock speeds. Some searching revealed a discussion board\cite{openocd-sockit} where the error was mentioned, which pointed to a patch for the issue\cite{openocd-fix}.
+
+Compiling a version of OpenOCD with this patch applied seemed to get around the issue, but unfortunately it would still not run.\footnote{At time of writing, I've long since forgotten the exact issue, if indeed I ever worked out what it was. Let this be a lesson to write this kind of thing down somewhere.} After a meeting between the Author and Supervisor, it was decided to scrap the SoCKit route and work with the DE2 board, which had been used succesfully in a previous project.
+
 \section{DE2}
 \subsection{Building}
 \subsection{Debugging}

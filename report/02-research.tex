@@ -1,6 +1,6 @@
 \chapter{Research}
 
-To carry out the project aims, a \textbf{Soft Processor}, a processor which is to some extent configurable, is needed. Specifically we need to be able to directly modify the MMU code.
+To carry out the project aims, a \textbf{Soft Processor}, a processor which is to some extent configurable, is needed. Specifically we need to be able to directly modify the MMU code. This chapter provides a comparison of the various Soft Processors available.
 
 \section{Comparison of Soft Processors}
 The following metrics will be taken into account:
@@ -14,7 +14,7 @@ The following metrics will be taken into account:
 \item Documentation
 \item Toolchain/Debugger/Monitor/JTAG
 \item Maturity
-\item Resources, Speed on target FPGA
+%\item Resources, Speed on target FPGA
 \end{itemize}
 
 \subsection{OpenRISC}
@@ -22,7 +22,7 @@ The following metrics will be taken into account:
 \paragraph{Bus Used} OpenRISC uses Wishbone, an open source specification by OpenCores.
 \paragraph{Architecture} 32/64-bit Mips-like.
 \paragraph{Cache} 1--64kB for Instructions and Data each.
-\paragraph{MMU} Virtual Memory support. TLB with page size 8kB and 16--256 entries.
+\paragraph{MMU} Virtual Memory support. TLB (Table Lookaside Buffer) with page size 8kB and 16--256 entries.
 \paragraph{User Levels} User/Supervisor Mode.
 \paragraph{License} There are two main open source implementations available. A Verilog implementation, OpenRISC 1200, is released under LGPL. Another Verilog implementation, mor1kx, is available under a weak copy-left licence created specifically for it, the OHDL.
 \paragraph{Documentation} The specification can be found \href{https://github.com/openrisc/doc/blob/master/openrisc-arch-1.1-rev0.pdf?raw=true}{here}. Documentation for both implementations are also available at their respective Github pages: \href{https://github.com/openrisc/mor1kx}{Mor1kx}, \href{https://github.com/openrisc/or1200}{OR1200}.
@@ -89,7 +89,7 @@ The following metrics will be taken into account:
 \paragraph{Toolchain} An extension of Altera's Quartus II. Supported by the ARM microprocessor development kit for software development.
 \paragraph{Maturity} Couldn't find any information.
 
-\subsection{Choice and Justification}
+\section{Choice and Justification}
 As well as having to contain an MMU, another requirement for the project is that the processor have open code for it. Just having a customisable size is not enough, since the aims include adding entirely new registers and logic to the MMU.
 
 These restrictions eliminate all the above save OpenRISC and the LEON2/3 processors. The OpenRISC was chosen for the project.
