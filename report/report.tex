@@ -55,7 +55,7 @@
 }
 
 % Listings
-\usepackage{chngcntr} % Renumbering done further down because the
+%\usepackage{chngcntr} % Renumbering done further down because the
                       % counter is only available after the document
                       % begins, for some reason.
 \usepackage{listings}
@@ -74,9 +74,9 @@
 \lstset{breaklines=true}
 \lstset{captionpos=b}
 
-\makeatletter
-\renewcommand\l@lstlisting[2]{\@dottedtocline{1}{1.5em}{2.75em}{#1}{#2}}
-\makeatother
+%\makeatletter
+%\renewcommand\l@lstlisting[2]{\@dottedtocline{1}{1.5em}{2.75em}{#1}{#2}}
+%\makeatother
 
 %%% END Article customizations
 
@@ -102,7 +102,7 @@ Supervisor: Guillaume Duc
 
 \begin{document}
 
-\counterwithin{lstlisting}{section}
+%\counterwithin{lstlisting}{section}
 
 \pagestyle{empty}
 
@@ -131,7 +131,7 @@ The work detailed in this project report modifies the Memory Management Unit (MM
 \include{03-implementation}
 \include{04-results}
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 
 \bibitem{heartbleed}
   Heartbleed Website\\
@@ -142,6 +142,11 @@ The work detailed in this project report modifies the Memory Management Unit (MM
   SoCKit page on Distributor site\\
   \url{parts.arrow.com/item/detail/arrow-development-tools/sockit}\\
   Fetched 2015-06-16.
+
+\bibitem{de2}
+	DE2 page on Altera site\\
+  \url{wl.altera.com/education/univ/materials/boards/de2/unv-de2-board.html}\\
+  Fetched 2015-06-17.
   
 \bibitem{fusesoc}
   FuseSoC repository on Github\\

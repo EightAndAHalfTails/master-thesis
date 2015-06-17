@@ -1,10 +1,13 @@
 \chapter{Implementation}
-This chapter gives an account of the work done during the project. Initially an Altera SoCKit was used as the target device. However, even after extensive modifications, a working build was not obtained. The details of the attempt will nonetheless be detailed both as a record of work done and to advise future attempts.
+\label{cha:imp}
 
-Following this attempt, an Altera DE2 board was used. This target device proved successful, and the hardware modifications and code written that are detailed in the following sections were run on this board (although in theory, the code is device-agnostic).
+This chapter gives an account of the work done during the project. As described in Chapter~\ref{cha:res}, the OpenRISC (\textbf{or1k}) was chosen as the target processor. To allow for repeated instatiations and modifications of this hardware design, a Field Programmable Gate Array (FPGA) development board was used. Initially the Altera SoCKit\cite{sockit} was chosen as the target device. However, even after extensive modifications, a working build was not obtained. The details of the attempt will nonetheless be detailed both as a record of work done and to advise future attempts.
+
+Following this attempt, an Altera DE2 board\cite{de2} was used. This target device proved successful, and the hardware modifications and code written that are detailed in the following sections were run on this board (although in theory, the code is device-agnostic).
 
 \section{SoCKit}
-The initial project aim was to use an Altera SoCKit Field Programmable Gate Array (FPGA) development board\cite{sockit} to instantiate and test the hardware. This section details the (ultimately unsuccessful) attempt to get it working.
+\label{sec:sockit}
+The initial project aim was to use the Altera SoCKit to instantiate and test the hardware.  This section details the (ultimately unsuccessful) attempt to get it working.
 
 \subsection{Building}
 The first step was to build the OpenRISC processor and program it onto the board. For this a tool called \textbf{FuseSoC}\cite{fusesoc} (formerly \textbf{OrpSoCv3}) was used. FuseSoC's readme describes it as a ``package manager and a set of build tools for HDL [Hardware Description Language] code.'' Using this, it is simple\footnote{In theory.} to build \textbf{mor1kx} (the OpenRISC implementation in question) for the SoCKit with the command \verb|fusesoc build sockit|. This command invokes the relevant Quartus executables to build a netlist to be programmed.
@@ -102,8 +105,13 @@ However, running OpenOCD for the SoCKit gave an error regarding mismatched clock
 Compiling a version of OpenOCD with this patch applied seemed to get around the issue, but unfortunately it would still not run.\footnote{At time of writing, I've long since forgotten the exact issue, if indeed I ever worked out what it was. Let this be a lesson to write this kind of thing down somewhere.} After a meeting between the Author and Supervisor, it was decided to scrap the SoCKit route and work with the DE2 board, which had been used successfully in a previous project.
 
 \section{DE2}
+%This section details the work done in setting up a development environment for the DE2 board. These steps were largely similar to those taken in Section~\ref{sec:sockit}.
+
 \subsection{Building}
-\subsection{Debugging}
-\subsection{Testing}
+%Once again, Fusesoc was used to build the processor. Appropriate configuration files were provided by the project supervisor.
+
+\subsection{Running}
+
+
 \section{Hardware}
 \section{Software}
