@@ -1,6 +1,106 @@
 \chapter{Results}
 \label{cha:results}
+This chapter gives an analysis of the new hardware, including its impact on area and frequency.
 
 \section{Hardware Comparison}
+Figures \ref{fig:fit_before} and \ref{fig:fit_after} depict the output from Quartus's Fitter stage. It is interesting to note that the total number of Logic Elements (LEs) used has decreased from 11,313 to 10,855, a 4\% decrease, despite the fact that only extra signals have been added, and nothing has been removed.
+
+The other notable change is that the total memory bits used has increased from 46,080 to 64,264, an increase of 16384, or nearly 40\%. This is exactly as expected, since it corresponds to the 512 extra 32-bit registers added.
+
+Figures \ref{fig:sta_before} and \ref{fig:sta_after} depict the output from Quartus's Static Timing Analysis stage.
+
+\begin{figure}[t]
+  \centering
+  \footnotesize
+  \begin{verbatim}
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Thu Jun 18 16:18:53 2015           ;
+; Quartus II 32-bit Version          ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition ;
+; Revision Name                      ; de2                                             ;
+; Top-level Entity Name              ; orpsoc_top                                      ;
+; Family                             ; Cyclone II                                      ;
+; Device                             ; EP2C35F672C6                                    ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 11,313 / 33,216 ( 34 % )                        ;
+;     Total combinational functions  ; 9,401 / 33,216 ( 28 % )                         ;
+;     Dedicated logic registers      ; 6,248 / 33,216 ( 19 % )                         ;
+; Total registers                    ; 6248                                            ;
+; Total pins                         ; 60 / 475 ( 13 % )                               ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 46,080 / 483,840 ( 10 % )                       ;
+; Embedded Multiplier 9-bit elements ; 6 / 70 ( 9 % )                                  ;
+; Total PLLs                         ; 1 / 4 ( 25 % )                                  ;
++------------------------------------+-------------------------------------------------+
+  \end{verbatim}
+  \caption{Fitter Summary for the base mor1kx provided by OpenRISC}
+  \label{fig:fit_before}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \footnotesize
+  \begin{verbatim}
++--------------------------------------------------------------------------------+
+; Slow Model Fmax Summary                                                        ;
++------------+-----------------+------------------------------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name                               ; Note ;
++------------+-----------------+------------------------------------------+------+
+; 56.54 MHz  ; 56.54 MHz       ; clkgen0|pll0|altpll_component|pll|clk[1] ;      ;
+; 119.65 MHz ; 119.65 MHz      ; clkgen0|pll0|altpll_component|pll|clk[0] ;      ;
++------------+-----------------+------------------------------------------+------+
+  \end{verbatim}
+  \caption{Static Timing Analysis for the base mor1kx provided by OpenRISC}
+  \label{fig:sta_before}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \footnotesize
+  \begin{verbatim}
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Thu Jun 18 16:43:41 2015           ;
+; Quartus II 32-bit Version          ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition ;
+; Revision Name                      ; de2                                             ;
+; Top-level Entity Name              ; orpsoc_top                                      ;
+; Family                             ; Cyclone II                                      ;
+; Device                             ; EP2C35F672C6                                    ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 10,855 / 33,216 ( 33 % )                        ;
+;     Total combinational functions  ; 9,440 / 33,216 ( 28 % )                         ;
+;     Dedicated logic registers      ; 5,472 / 33,216 ( 16 % )                         ;
+; Total registers                    ; 5472                                            ;
+; Total pins                         ; 60 / 475 ( 13 % )                               ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 62,464 / 483,840 ( 13 % )                       ;
+; Embedded Multiplier 9-bit elements ; 6 / 70 ( 9 % )                                  ;
+; Total PLLs                         ; 1 / 4 ( 25 % )                                  ;
++------------------------------------+-------------------------------------------------+
+  \end{verbatim}
+  \caption{Fitter Summary for the modified mor1kx with added registers and logic}
+  \label{fig:fit_after}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \footnotesize
+  \begin{verbatim}
++--------------------------------------------------------------------------------+
+; Slow Model Fmax Summary                                                        ;
++------------+-----------------+------------------------------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name                               ; Note ;
++------------+-----------------+------------------------------------------+------+
+; 53.3 MHz   ; 53.3 MHz        ; clkgen0|pll0|altpll_component|pll|clk[1] ;      ;
+; 124.72 MHz ; 124.72 MHz      ; clkgen0|pll0|altpll_component|pll|clk[0] ;      ;
++------------+-----------------+------------------------------------------+------+
+  \end{verbatim}
+  \caption{Static Timing Analysis for the modified mor1kx with added registers and logic}
+  \label{fig:sta_after}
+\end{figure}
+
+
 \section{Conclusion}
 \section{Future Work}
