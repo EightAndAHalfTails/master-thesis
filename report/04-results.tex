@@ -1,11 +1,18 @@
 \chapter{Results}
 \label{cha:results}
-This chapter gives an analysis of the new hardware, including its impact on area and frequency.
+This chapter gives a summary of what was acheived during the project, followed by an analysis of the new hardware, including its impact on area and frequency.
 
-\section{Hardware Comparison}
-Figures \ref{fig:fit_before} and \ref{fig:fit_after} depict the output from Quartus's Fitter stage. It is interesting to note that the total number of Logic Elements (LEs) used has decreased from 11,313 to 10,855, a 4\% decrease, despite the fact that only extra signals have been added, and nothing has been removed.
+\section{Summary of Functionality Added}
+The work done in this project modified the Data Memory Management Unit (DMMU) of the OpenRISC soft processor, specifically the \texttt{mor1kx} implementation.
+512 extra 32-bit registers were added to allow for invalidation of individual 32B cache blocks in the virtual memory. This is an improvement over the original system, which only allows for invalidation of entire 8kB pages.
 
-The other notable change is that the total memory bits used has increased from 46,080 to 64,264, an increase of 16384, or nearly 40\%. This is exactly as expected, since it corresponds to the 512 extra 32-bit registers added.
+The software running on the processor is then able to invalidate a cache block in virtual memory by setting one of the bits in these registers, the index of which is based on the set number of the page in and the cache block number within the page.
+Thereafter, when an invalid cache block is accessed, the hardware automatically signals a page fault, dropping the processor into the exception handler. From here, control can potentially be given to the operating system to avoid a buffer overflow, or terminate the offending process.
+
+\section{Hardware Impact}
+Figures \ref{fig:fit_before} and \ref{fig:fit_after} depict the output from Quartus's Fitter stage. It is interesting to note that the total number of Logic Elements (LEs) used has decreased slightly from 11,313 to 10,855, which corresponds to about 4\%. In addition, the total number of registers has decreased from 6,248 to 5,472, a 12\% drop. This is in spite of the fact that only extra signals have been added, and nothing has been removed.
+
+The other notable change is that the total memory bits used has increased from 46,080 to 64,264, an increase of 16,384, or nearly 40\%. This is exactly as expected, since it corresponds to the 512 extra 32-bit registers added.
 
 Figures \ref{fig:sta_before} and \ref{fig:sta_after} depict the output from Quartus's Static Timing Analysis stage.
 
@@ -100,7 +107,6 @@ Figures \ref{fig:sta_before} and \ref{fig:sta_after} depict the output from Quar
   \caption{Static Timing Analysis for the modified mor1kx with added registers and logic}
   \label{fig:sta_after}
 \end{figure}
-
 
 \section{Conclusion}
 \section{Future Work}
