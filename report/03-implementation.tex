@@ -1,7 +1,7 @@
 \chapter{Implementation}
 \label{cha:imp}
 
-This chapter gives an account of the work done during the project. As described in Chapter~\ref{cha:res}, the OpenRISC (\textbf{or1k}) was chosen as the target processor architecture. To allow for repeated instatiations and modifications of this hardware design, a Field Programmable Gate Array (FPGA) development board was used. Initially the Altera SoCKit\cite{sockit} was chosen as the target device. However, even after extensive modifications, a working build was not obtained. The details of the attempt will nonetheless be detailed both as a record of work done and to advise future attempts.
+This chapter gives an account of the work done during the project. As described in Chapter~\ref{cha:res}, the OpenRISC (\textbf{or1k}) was chosen as the target processor architecture. To allow for repeated instantiations and modifications of this hardware design, a Field Programmable Gate Array (FPGA) development board was used. Initially the Altera SoCKit\cite{sockit} was chosen as the target device. However, even after extensive modifications, a working build was not obtained. The details of the attempt will nonetheless be detailed both as a record of work done and to advise future attempts.
 
 Following this attempt, an Altera DE2 board\cite{de2} was used. This target device proved successful, and the hardware modifications and code written that are detailed in the following sections were run on this board (although in theory, the code is device-agnostic).
 
@@ -12,7 +12,7 @@ The initial project aim was to use the Altera SoCKit to instantiate and test the
 \subsection{Building}
 The first step was to build the OpenRISC processor and program it onto the board. For this a tool called \textbf{FuseSoC}\cite{fusesoc} (formerly \textbf{OrpSoCv3}) was used. FuseSoC's readme describes it as a ``package manager and a set of build tools for HDL [Hardware Description Language] code.'' Using this, it is simple\footnote{In theory.} to build \textbf{mor1kx} (the OpenRISC implementation in question) for the SoCKit with the command \texttt{fusesoc build sockit}. This command invokes the relevant Quartus executables to build a netlist to be programmed.
 
-However, the build did not work at first. A lot of searching revealed the problem to be a bug in FuseSoC's libraries. As shown below, the port names between two files did not agree. Patching this error allowed the build to continue.\footnote{Unfortunately for me, by the time I thought to submit a bug report or a pull request upstream, the bug had alread been found and patched by the developers.}
+However, the build did not work at first. A lot of searching revealed the problem to be a bug in FuseSoC's libraries. As shown below, the port names between two files did not agree. Patching this error allowed the build to continue.\footnote{Unfortunately for me, by the time I thought to submit a bug report or a pull request upstream, the bug had already been found and patched by the developers.}
 
 Figure~\ref{fig:wb_dec} gives the declaration of the \verb|avalon_to_wb_bridge| module. If this is compared to an instantiation of that module, such as the one given in Figure~\ref{fig:wb_inst}, it can be seen that several port names are incorrect. This is likely due to the former file being changed without proper care being taken to update port names throughout the code.
 
@@ -96,7 +96,7 @@ wb_to_avalon_bridge #(
 \end{figure}
 
 \subsection{Running}
-After the processor was built and the board programmed, the next step was to load an object file onto the processor. For this a linux image was used, compiled using the \texttt{or1k-elf-gcc} toolchain as detailed on the OpenCores website\cite{or1k-linux}. The resulting object file was simulated under the toolchain's simulator and found to run as expected.
+After the processor was built and the board programmed, the next step was to load an object file onto the processor. For this a Linux image was used, compiled using the \texttt{or1k-elf-gcc} toolchain as detailed on the OpenCores website\cite{or1k-linux}. The resulting object file was simulated under the toolchain's simulator and found to run as expected.
 
 To debug the running processor, including loading object files, the \textbf{Open On-chip Debugger} (\textbf{OpenOCD}) was used as detailed, once again, on the OpenCores website\cite{or1k-openocd}.
 
@@ -129,7 +129,7 @@ SPRs are a feature of the or1k architecture which are generally used to hold con
 
 Each unit has a ``group'' of 2048 SPR addresses allocated to it, and fortunately the last 512 addresses in the DMMU group were unused, allowing their allocation for the purposes of this project.
 
-Figure~\ref{fig:regs_inst} shows the instantiation of the new registers. Alhough the address width was given in terms of the set width\footnote{6 bits for 64 sets, +8 for 256 bits per page, -5 for the 32 bits in each SPR}, increasing the number of sets or ways in the DMMU now would cause the addresses of the new registers to overflow their allocated address space. Therefore, the DMMU size should henceforth be considered unconfigurable.
+Figure~\ref{fig:regs_inst} shows the instantiation of the new registers. Although the address width was given in terms of the set width\footnote{6 bits for 64 sets, +8 for 256 bits per page, -5 for the 32 bits in each SPR}, increasing the number of sets or ways in the DMMU now would cause the addresses of the new registers to overflow their allocated address space. Therefore, the DMMU size should henceforth be considered unconfigurable.
 
 \begin{figure}[t]
   \centering
@@ -218,7 +218,7 @@ Within the DMMU, all signals relating to these instructions are provided via the
 
 Figure~\ref{fig:spr_logic} shows the preexisting code for the match and translate registers, alongside the new code added for the new registers. The \verb|_spr_cs| signals indicate whether an incoming SPR address falls into one of the named SPRs.\footnote{i.e. \texttt{dtlb\_match\_spr\_cs} is asserted if the SPR address points to a match register in the DTLB.} If this signal is asserted, then the register address within the RAM block is taken from the lower 9 bits of the SPR address.
 
-Since the software is going to be in charge of invalidating memory, the registers will only ever be written by an \texttt{mtspr} instruction. Therefore the RAM's input data bus reads directly from the data-in field of the SPR bus, and the write enable signal is asserted on a \texttt{mtspr} instruction.
+Since the software is going to be in charge of invalidating memory, the registers will only ever be written by an \texttt{mtspr} instruction. Therefore the RAM's input data bus reads directly from the data-in field of the SPR bus, and the write enable signal is asserted on an \texttt{mtspr} instruction.
 
 Finally, the data from the RAM is returned to the SPR bus. The \verb|_spr_cs_r| signals are the \verb|_spr_cs| delayed by one cycle to align with the read cycle. When these are asserted, the appropriate RAM block is selected to read the output from.
 
@@ -228,7 +228,7 @@ The lower 5 bits \texttt{[4:0]} refer to the word inside the cache block and sho
 
 In other words, the 14 bits \texttt{[18:5]} give the bit index within the RAM. Of these, the 9 upper bits \texttt{[18:10]} index one of the 512 registers, while the lower 5 \texttt{[9:5]} index the bit within the register.
 
-Figure~\ref{fig:pgf_logic} shows the lines edited. A new signal was created to indicate when a load or store operation attempts to access invalid memory, then this signal is used alongside the existing access code violations as a condition for the pagefault signal.
+Figure~\ref{fig:pgf_logic} shows the lines edited. A new signal was created to indicate when a load or store operation attempts to access invalid memory, then this signal is used alongside the existing access code violations as a condition for the page fault signal.
 
 \begin{figure}[t]
   \centering
@@ -258,7 +258,7 @@ The DTLB miss exception handler is responsible for loading PTEs into the DTLB. I
 
 To set up the relevant entries in the DTLB, the exception handler must fill the match register in the appropriate set with the Virtual Page Number (VPN), and fill the corresponding translate register with the Physical Page Number (PPN). In addition, the match register requires bit 0 to be set to be valid, and the translate register has several protection bits saying whether the corresponding page can be read or written in supervisor or user mode. For the purposes of this test program, these can all be enabled.
 
-In Figure~\ref{fig:exh}, the exception handler first obtains the Effective Address\footnote{For all intents and purposes, this is identical to a virtual address, but the or1k specification distinguishes beween them} (EA) whose translation triggered the exception. The page number of this address is made up of the top 19 bits, so the bottom 13 bits are cleared. The set number is found by taking bits 18 to 13 of the EA. The result is then used as an offset for the \texttt{mtspr} instruction, which takes a register value and ORs it with an immediate to obtain the SPR address.
+In Figure~\ref{fig:exh}, the exception handler first obtains the Effective Address\footnote{For all intents and purposes, this is identical to a virtual address, but the or1k specification distinguishes between them} (EA) whose translation triggered the exception. The page number of this address is made up of the top 19 bits, so the bottom 13 bits are cleared. The set number is found by taking bits 18 to 13 of the EA. The result is then used as an offset for the \texttt{mtspr} instruction, which takes a register value and ORs it with an immediate to obtain the SPR address.
 
 After the exception handlers, the main program was written. All this had to do was store some data in memory, then activate the DMMU and attempt to retrieve the data. Figure~\ref{fig:mn1} shows the code written to do this. The DMMU is enabled by setting bit 5 of an SPR called the Status Register (SR). The test value is loaded into register 15, and by checking the contents of this register with OpenOCD, it can be confirmed that the program worked as expected.
 
